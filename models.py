@@ -10,13 +10,17 @@ def soft_with_T(T=1):
         return softmax(x/T)
     return swt
 
-def exp_regularizer(b, l2=0.01):
-    l = np.logspace(1, b, num=10, base=np.exp(1))
-    e_x = np.exp(l - np.max(l))
+def exp_regularizer(a, l2=0.01):
+#     l = np.logspace(1, b, num=10, base=np.exp(1))
+#     e_x = np.exp(l - np.max(l))
+#     s = e_x / e_x.sum(axis=0)
+    l = np.linspace(0, 1, 10)
+    e_x = a*np.exp(-a*l)
     s = e_x / e_x.sum(axis=0)
     var_s = K.variable(value=s)
     def exp_reg(x):
-        x_sorted = tf.sort(x, axis=-1, direction='ASCENDING', name=None)
+        x_sorted = tf.sort(x, axis=-1, direction='DESCENDING', name=None)
+        # TODO: TRY KL DIVERGENCE HERE
         return l2 * K.sqrt(K.sum((x_sorted-s)**2))
     return exp_reg
     
